@@ -11,3 +11,9 @@ def generate_slug():
         return generate_slug()
     redis.sadd('slugs_set', slug)
     return slug
+
+
+def normalize_url(url: str):
+    url = url.replace('www.', '')
+    url = 'https://' + url if not(url.startswith('https://')) else url
+    return url

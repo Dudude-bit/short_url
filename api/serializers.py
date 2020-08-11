@@ -7,5 +7,5 @@ class URLSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = URLModel
-        fields = '__all__'
+        fields = ['url']
 
