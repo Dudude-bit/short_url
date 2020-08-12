@@ -16,8 +16,10 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include, re_path
 
+from main_app.views import RedirectURL
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include('api.urls', namespace='api')),
-    re_path(r'(?P<slug>[a-zA-z]{8})/', Redirect.as_view())
+    re_path(r'(?P<slug>[a-zA-z]{8})/', RedirectURL.as_view())
 ]

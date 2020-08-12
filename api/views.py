@@ -11,9 +11,10 @@ class CreateURL(generics.CreateAPIView):
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
-        serializer.initial_data._mutable = True
-        serializer.initial_data['slug'] = generate_slug()
-        serializer.initial_data._mutable = False
+        if not(type(serializer.initial_data == dict)):
+            serializer.initial_data._mutable = True
+            serializer.initial_data['slug'] = generate_slug()
+            serializer.initial_data._mutable = False
         serializer.is_valid(raise_exception=True)
         serializer.validated_data['url'] = normalize_url(serializer.validated_data['url'])
         self.perform_create(serializer)
