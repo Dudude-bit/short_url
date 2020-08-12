@@ -25,3 +25,9 @@ class GetURL(generics.RetrieveAPIView):
     lookup_field = 'slug'
     serializer_class = URLSerializer
     queryset = URLModel.objects.all()
+
+
+class DeleteURL(generics.DestroyAPIView):
+    lookup_field = 'slug'
+    serializer_class = URLSerializer
+    queryset = URLModel.objects.all()
