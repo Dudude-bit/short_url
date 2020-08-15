@@ -1,6 +1,7 @@
 from string import ascii_letters
 import random
 import redis
+from django.contrib.auth.models import AnonymousUser
 
 redis = redis.Redis()
 
@@ -23,3 +24,15 @@ def normalize_url(url: str):
 
 def delete_slug(slug):
     redis.srem('slugs_set', slug)
+
+
+class CurrentUserDefault:
+    requires_context = True
+
+    def __call__(self, serializer_field):
+        if type(serializer_field.context['request'].user) == AnonymousUser:
+            return None
+        return serializer_field.context['request'].user
+
+    def __repr__(self):
+        return '%s()' % self.__class__.__name__

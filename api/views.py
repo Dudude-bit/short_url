@@ -4,6 +4,8 @@ from rest_framework.exceptions import ValidationError
 from .serializers import URLSerializer
 from .services import generate_slug, normalize_url, delete_slug
 from main_app.models import URLModel
+from .permission_classes import IsOwnerOrAnonymousUser
+from django.utils.functional import SimpleLazyObject
 
 
 class CreateURL(generics.CreateAPIView):
@@ -15,12 +17,8 @@ class CreateURL(generics.CreateAPIView):
         else:
             request.data._mutable = True
             request.data['url'] = normalize_url(request.data.get('url', None))
-            if request.data['url'] is not None:
+            if request.data['url']:
                 request.data['slug'] = generate_slug()
-            if request.user.is_authenticated:
-                request.data['user'] = request.user
-            else:
-                request.data['user'] = None
             request.data._mutable = False
         try:
             return super(CreateURL, self).post(request, *args, **kwargs)
@@ -30,11 +28,19 @@ class CreateURL(generics.CreateAPIView):
             raise e
 
 
-class GetURL(generics.RetrieveDestroyAPIView):
+class GetURL(generics.RetrieveAPIView):
     lookup_field = 'slug'
     serializer_class = URLSerializer
     queryset = URLModel.objects.all()
+    permission_classes = (IsOwnerOrAnonymousUser,)
+
+
+class DeleteURL(generics.DestroyAPIView):
+    lookup_field = 'slug'
+    serializer_class = URLSerializer
+    queryset = URLModel.objects.all()
+    permission_classes = []
 
     def delete(self, request, *args, **kwargs):
         delete_slug(request.data.get('slug'))
-        return super().delete(request, *args, **kwargs)
+        return super(DeleteURL, self).delete(request, *args, **kwargs)
