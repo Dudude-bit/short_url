@@ -4,18 +4,19 @@ from rest_framework.exceptions import ValidationError
 from .serializers import URLSerializer
 from .services import generate_slug, normalize_url, delete_slug
 from main_app.models import URLModel
-from .permission_classes import IsOwnerOrAnonymousUser
-from django.utils.functional import SimpleLazyObject
+from .permission_classes import IsOwner
+from rest_framework.permissions import IsAuthenticated
 
 
 class CreateURL(generics.CreateAPIView):
     serializer_class = URLSerializer
 
     def post(self, request, *args, **kwargs):
-        if type(request.data) == dict:
+        if not request.data:
             return HttpResponse(status=400)
         else:
             request.data._mutable = True
+            request.session['test'] = 'teeeesstt'
             request.data['url'] = normalize_url(request.data.get('url', None))
             if request.data['url']:
                 request.data['slug'] = generate_slug()
@@ -32,14 +33,13 @@ class GetURL(generics.RetrieveAPIView):
     lookup_field = 'slug'
     serializer_class = URLSerializer
     queryset = URLModel.objects.all()
-    permission_classes = (IsOwnerOrAnonymousUser,)
 
 
 class DeleteURL(generics.DestroyAPIView):
     lookup_field = 'slug'
     serializer_class = URLSerializer
     queryset = URLModel.objects.all()
-    permission_classes = []
+    permission_classes = [IsAuthenticated, IsOwner]
 
     def delete(self, request, *args, **kwargs):
         delete_slug(request.data.get('slug'))

@@ -2,6 +2,7 @@ from string import ascii_letters
 import random
 import redis
 from django.contrib.auth.models import AnonymousUser
+import re
 
 redis = redis.Redis()
 
@@ -17,8 +18,7 @@ def generate_slug():
 def normalize_url(url: str):
     if not url:
         return None
-    url = url.replace('www.', '')
-    url = 'https://' + url if not (url.startswith('https://')) else url
+    url = re.sub(r"^(?:https?://)|(?:www.)|(?:)", 'http://', url, count=1, flags=re.IGNORECASE)
     return url
 
 
