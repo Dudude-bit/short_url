@@ -14,6 +14,12 @@ def generate_slug():
 
 
 def normalize_url(url: str):
+    if not url:
+        return None
     url = url.replace('www.', '')
-    url = 'https://' + url if not(url.startswith('https://')) else url
+    url = 'https://' + url if not (url.startswith('https://')) else url
     return url
+
+
+def delete_slug(slug):
+    redis.srem('slugs_set', slug)

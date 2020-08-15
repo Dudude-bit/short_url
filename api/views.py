@@ -1,34 +1,40 @@
-from rest_framework import generics, status
-from rest_framework.response import Response
-
+from django.http import HttpResponse
+from rest_framework import generics
+from rest_framework.exceptions import ValidationError
 from .serializers import URLSerializer
-from .services import generate_slug, normalize_url
-from .models import URLModel
+from .services import generate_slug, normalize_url, delete_slug
+from main_app.models import URLModel
 
 
 class CreateURL(generics.CreateAPIView):
     serializer_class = URLSerializer
 
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        if not(type(serializer.initial_data == dict)):
-            serializer.initial_data._mutable = True
-            serializer.initial_data['slug'] = generate_slug()
-            serializer.initial_data._mutable = False
-        serializer.is_valid(raise_exception=True)
-        serializer.validated_data['url'] = normalize_url(serializer.validated_data['url'])
-        self.perform_create(serializer)
-        headers = self.get_success_headers(serializer.data)
-        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+    def post(self, request, *args, **kwargs):
+        if type(request.data) == dict:
+            return HttpResponse(status=400)
+        else:
+            request.data._mutable = True
+            request.data['url'] = normalize_url(request.data.get('url', None))
+            if request.data['url'] is not None:
+                request.data['slug'] = generate_slug()
+            if request.user.is_authenticated:
+                request.data['user'] = request.user
+            else:
+                request.data['user'] = None
+            request.data._mutable = False
+        try:
+            return super(CreateURL, self).post(request, *args, **kwargs)
+        except ValidationError as e:
+            slug = request.data['slug']
+            delete_slug(slug)
+            raise e
 
 
-class GetURL(generics.RetrieveAPIView):
+class GetURL(generics.RetrieveDestroyAPIView):
     lookup_field = 'slug'
     serializer_class = URLSerializer
     queryset = URLModel.objects.all()
 
-
-class DeleteURL(generics.DestroyAPIView):
-    lookup_field = 'slug'
-    serializer_class = URLSerializer
-    queryset = URLModel.objects.all()
+    def delete(self, request, *args, **kwargs):
+        delete_slug(request.data.get('slug'))
+        return super().delete(request, *args, **kwargs)
