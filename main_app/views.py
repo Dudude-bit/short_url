@@ -3,10 +3,10 @@ from django.shortcuts import render, get_object_or_404, redirect
 # Create your views here.
 from django.views import View
 from main_app.models import URLModel
-from django.views.generic import ListView, CreateView, FormView
-from django.contrib.auth.forms import UserCreationForm
+from django.views.generic import FormView
+from .forms import UserRegistrationForm
 from django.contrib.auth.views import LoginView
-from django.contrib.auth.models import User
+from .forms import URLForm
 
 
 class RedirectURL(View):
@@ -16,15 +16,23 @@ class RedirectURL(View):
         return redirect(url)
 
 
-class CreateUser(FormView):
-    form_class = UserCreationForm
+class MainPageView(FormView):
+    form_class = URLForm
     template_name = 'create_user.html'
     success_url = '/'
+    
+    def form_valid(self, form):
+        form.save()
+        return super(MainPageView, self).form_valid()
+
+
+class CreateUser(FormView):
+    form_class = UserRegistrationForm
+    template_name = 'create_user.html'
+    success_url = '/login'
 
     def form_valid(self, form):
-        username = form.cleaned_data.get('username')
-        password = form.cleaned_data.get('password1')
-        User.objects.create_user(username=username, password=password)
+        form.save()
         return super(CreateUser, self).form_valid(form)
 
 
