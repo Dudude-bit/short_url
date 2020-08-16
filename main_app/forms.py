@@ -2,21 +2,15 @@ from django import forms
 from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UsernameField
-
+from django.core.validators import MinLengthValidator
 from .models import URLModel
 
-
-class URLForm(forms.ModelForm):
-    class Meta:
-        model = URLModel
-        fields = ['url']
-
-
 class UserRegistrationForm(forms.ModelForm):
-    username = UsernameField(min_length=1, max_length=255)
     email = forms.EmailField()
-    password1 = forms.CharField(min_length=8, label='Пароль', widget=forms.PasswordInput)
-    password2 = forms.CharField(min_length=8, label='Повторите пароль', widget=forms.PasswordInput)
+    password1 = forms.CharField(min_length=8, label='Пароль', widget=forms.PasswordInput, validators=[
+        MinLengthValidator(8, message='Ваш пароль должен быть длиннее 8 символов'), ])
+    password2 = forms.CharField(min_length=8, label='Повторите пароль', widget=forms.PasswordInput, validators=[
+        MinLengthValidator(8, message='Ваш пароль должен быть длиннее 8 символов'), ])
 
     class Meta:
         model = User
@@ -28,8 +22,6 @@ class UserRegistrationForm(forms.ModelForm):
         password2 = self.cleaned_data['password2']
         if password1 != password2:
             raise ValidationError(message='Не совпадают два пароля')
-        if len(password2) < 8:
-            raise ValidationError(message='Слишком короткий пароль')
         return password2
 
     def save(self):
