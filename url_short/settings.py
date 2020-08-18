@@ -127,3 +127,5 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+SESSION_SAVE_EVERY_REQUEST = True
+
