@@ -12,7 +12,6 @@ class CreateURL(generics.CreateAPIView):
     serializer_class = URLSerializer
 
     def post(self, request, *args, **kwargs):
-        print(request.POST)
         if not request.data:
             return HttpResponse(status=400)
         else:

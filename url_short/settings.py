@@ -129,3 +129,9 @@ STATIC_URL = '/static/'
 
 SESSION_SAVE_EVERY_REQUEST = True
 
+REST_FRAMEWORK = {
+    'DEFAULT_RENDERER_CLASSES': [
+        'rest_framework.renderers.JSONRenderer'
+    ]
+}
+
