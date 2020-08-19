@@ -1,6 +1,9 @@
 from django.http import HttpResponse
-from rest_framework import generics
+from django.views.decorators.csrf import csrf_exempt
+from rest_framework import generics, status
 from rest_framework.exceptions import ValidationError
+from rest_framework.response import Response
+
 from .serializers import URLSerializer
 from .services import generate_slug, normalize_url, delete_slug
 from main_app.models import URLModel
@@ -11,6 +14,8 @@ from rest_framework.permissions import IsAuthenticated
 class CreateURL(generics.CreateAPIView):
     serializer_class = URLSerializer
 
+
+    @csrf_exempt
     def post(self, request, *args, **kwargs):
         if not request.data:
             return HttpResponse(status=400)
@@ -23,6 +28,13 @@ class CreateURL(generics.CreateAPIView):
         try:
             return super(CreateURL, self).post(request, *args, **kwargs)
         except ValidationError as e:
+            detail = e.detail.get('url', None)
+            if detail:
+                if detail[0].code == 'unique':
+                    obj = URLModel.objects.filter(url=request.data['url'])[0]
+                    serializer = self.get_serializer(obj)
+                    headers = self.get_success_headers(serializer.data)
+                    return Response(serializer.data, status = status.HTTP_201_CREATED, headers=headers)
             slug = request.data['slug']
             delete_slug(slug)
             raise e
