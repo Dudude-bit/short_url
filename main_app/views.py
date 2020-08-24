@@ -7,7 +7,6 @@ from django.views.generic import FormView
 from .forms import UserRegistrationForm
 from django.contrib.auth.views import LoginView
 from .forms import URLForm
-from api.services import normalize_url, generate_slug, delete_slug
 
 
 class RedirectURL(View):
