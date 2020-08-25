@@ -6,7 +6,7 @@ from main_app.models import URLModel
 from django.views.generic import FormView
 from .forms import UserRegistrationForm
 from django.contrib.auth.views import LoginView
-from .forms import URLForm
+
 
 
 class RedirectURL(View):
@@ -19,8 +19,7 @@ class RedirectURL(View):
 class MainPageView(View):
 
     def get(self, request):
-        form = URLForm
-        return render(request, 'main_page.html', {'form': form})
+        return render(request, 'main_page.html')
 
 
 class CreateUser(FormView):

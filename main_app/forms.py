@@ -33,13 +33,3 @@ class UserRegistrationForm(forms.ModelForm):
         password = self.cleaned_data.get('password')
         email = self.cleaned_data.get('email')
         user = User.objects.create_user(username, email, password)
-
-
-class URLForm(forms.ModelForm):
-    url = forms.CharField(label='url')
-    slug = forms.CharField(label='slug', widget=forms.TextInput(attrs=
-                                                                {'readonly': 'readonly'}))
-
-    class Meta:
-        model = URLModel
-        fields = ('url', 'slug',)
