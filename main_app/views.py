@@ -8,7 +8,6 @@ from .forms import UserRegistrationForm
 from django.contrib.auth.views import LoginView
 
 
-
 class RedirectURL(View):
 
     def get(self, request, slug):

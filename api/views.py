@@ -14,8 +14,6 @@ from rest_framework.permissions import IsAuthenticated
 class CreateURL(generics.CreateAPIView):
     serializer_class = URLSerializer
 
-
-    @csrf_exempt
     def post(self, request, *args, **kwargs):
         if not request.data:
             return HttpResponse(status=400)
@@ -34,7 +32,7 @@ class CreateURL(generics.CreateAPIView):
                     obj = URLModel.objects.filter(url=request.data['url'])[0]
                     serializer = self.get_serializer(obj)
                     headers = self.get_success_headers(serializer.data)
-                    return Response(serializer.data, status = status.HTTP_201_CREATED, headers=headers)
+                    return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
             slug = request.data['slug']
             delete_slug(slug)
             raise e
