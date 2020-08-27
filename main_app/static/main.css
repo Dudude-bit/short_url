@@ -30,8 +30,9 @@ input {
     background-color: rgba(255, 67, 100, 1);
     border: 2px black solid;
     border-radius: 10px;
-    padding-left: 20px;
+    text-align: center;
     width: 100%;
+    font-size: 120%;
 }
 
 button {
@@ -44,6 +45,8 @@ button {
     display: flex;
     width: 100%;
     justify-content: center;
+    align-items: center;
+    height: 70%;
 }
 
 .form{
