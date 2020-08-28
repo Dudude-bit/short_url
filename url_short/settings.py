@@ -26,7 +26,7 @@ SECRET_KEY = 'o=pi)q3&$$z-hubw!yi=o(=g2d&l*)q#&um--mn)u%cyf+3(un'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['348105-ct82002.tmweb.ru']
 
 
 # Application definition

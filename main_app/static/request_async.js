@@ -12,10 +12,15 @@ function get_data() {
             let addAnotherLink = document.createElement('button')
             addAnotherLink.innerHTML = 'Add another link'
             addAnotherLink.style.width = '50%'
+            addAnotherLink.style.borderLeft = '1px solid black'
+            addAnotherLink.style.borderTop = '2px solid black'
+            addAnotherLink.style.borderBottom = '2px solid black'
+            addAnotherLink.style.borderRight = '2px solid black'
             addAnotherLink.addEventListener('click', anotherLink)
             urlInput.value = slug
             button.innerHTML = 'Copy'
             button.style.width = '50%'
+            button.style.borderRight = '1px solid black'
             button.parentNode.insertBefore(addAnotherLink, button.nextSibling)
 
             button.setAttribute('onclick', 'copy()')
@@ -42,6 +47,7 @@ function anotherLink(){
     button.innerHTML = 'Shorten'
     button.setAttribute('onclick', 'get_data()')
     button.style.width = '100%'
+    button.style.border = '2px solid black'
     let urlInput = document.getElementsByName('url')[0]
     urlInput.value = ''
 
